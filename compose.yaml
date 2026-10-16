@@ -1,0 +1,72 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["--config", "/etc/test-case/config.toml"]
+    environment:
+      TEST_CASE__SYMBOL:
+      TEST_CASE__SIGNAL_THRESHOLD_BPS:
+      TEST_CASE__BINANCE_WS_BASE_URL:
+      TEST_CASE__ASTER_WS_BASE_URL:
+      TEST_CASE__FEED__MAX_ATTEMPTS:
+      TEST_CASE__FEED__CONNECT_TIMEOUT_MS:
+      TEST_CASE__FEED__SUBSCRIPTION_TIMEOUT_MS:
+      TEST_CASE__FEED__USEFUL_DATA_TIMEOUT_MS:
+      TEST_CASE__FEED__PUBLISHED_BOOK_MAX_AGE_MS:
+      TEST_CASE__FEED__PING_INTERVAL_MS:
+      TEST_CASE__FEED__PING_TIMEOUT_MS:
+      TEST_CASE__FEED__PING_WRITE_TIMEOUT_MS:
+      TEST_CASE__FEED__BACKOFF__MIN_DELAY_MS:
+      TEST_CASE__FEED__BACKOFF__MAX_DELAY_MS:
+      TEST_CASE__FEED__BACKOFF__FACTOR:
+      TEST_CASE__FEED__BACKOFF__JITTER:
+      TEST_CASE__CHANNELS__BINANCE_DEPTH:
+      TEST_CASE__CHANNELS__ASTER_DEPTH:
+      TEST_CASE__CHANNELS__BOOK_UPDATES:
+      TEST_CASE__CHANNELS__SIGNAL_RESULTS:
+      TEST_CASE__CHANNELS__SAMPLING_INTERVAL_MS:
+      TEST_CASE__METRICS__REQUEST_TIMEOUT_MS:
+      TEST_CASE__LOG__FILTER:
+      TEST_CASE__LOG__QUEUE_CAPACITY:
+      TEST_CASE__LOG__SHUTDOWN_TIMEOUT_MS:
+      TEST_CASE__METRICS__LISTEN_ADDR: ${TEST_CASE__METRICS__LISTEN_ADDR:-0.0.0.0:9898}
+    ports:
+      - "127.0.0.1:9898:9898"
+    volumes:
+      - ./config.example.toml:/etc/test-case/config.toml:ro
+
+  prometheus:
+    image: prom/prometheus:v3.14.0
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=7d
+      - --web.enable-lifecycle
+    ports:
+      - "127.0.0.1:9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:13.1.0
+    depends_on:
+      - prometheus
+    environment:
+      TEST_CASE_DASHBOARDS: /etc/grafana/dashboards
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?Run monitoring/start.sh or set GRAFANA_ADMIN_PASSWORD}
+      GF_USERS_DEFAULT_THEME: dark
+    ports:
+      - "127.0.0.1:3000:3000"
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/etc/grafana/dashboards:ro
+      - grafana-data:/var/lib/grafana
+    restart: unless-stopped
+
+volumes:
+  prometheus-data:
+  grafana-data:

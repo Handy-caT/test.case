@@ -1,0 +1,36 @@
+symbol = "ETHUSDT"
+signal_threshold_bps = 5.0
+binance_ws_base_url = "wss://fstream.binance.com/public/stream"
+aster_ws_base_url = "wss://fstream.asterdex.com/stream"
+
+[feed]
+max_attempts = 10
+connect_timeout_ms = 10000
+subscription_timeout_ms = 5000
+useful_data_timeout_ms = 10000
+published_book_max_age_ms = 3000
+ping_interval_ms = 15000
+ping_timeout_ms = 5000
+ping_write_timeout_ms = 1000
+
+[feed.backoff]
+min_delay_ms = 100
+max_delay_ms = 1800000
+factor = 1.1
+jitter = 0.05
+
+[channels]
+binance_depth = 10
+aster_depth = 10
+book_updates = 3
+signal_results = 3
+sampling_interval_ms = 1000
+
+[metrics]
+listen_addr = "127.0.0.1:9898"
+request_timeout_ms = 2000
+
+[log]
+filter = "warn,test_case=info"
+queue_capacity = 1024
+shutdown_timeout_ms = 100

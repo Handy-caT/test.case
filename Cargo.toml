@@ -1,0 +1,29 @@
+[package]
+name = "test-case"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+arc-swap = "1"
+axum = { version = "0.8", default-features = false, features = ["http1", "tokio"] }
+chrono = { version = "0.4", default-features = false, features = ["clock"] }
+clap = { version = "4", features = ["derive"] }
+config = { version = "0.15", default-features = false, features = ["toml"] }
+crossfire = "=3.1.20"
+derive_more = { version = "2.1.1", features = ["as_ref", "display", "error", "from"] }
+eyre = "0.6"
+futures = "0.3"
+log = "0.4"
+prometheus = { version = "0.14", features = ["process"] }
+rand = "0.7.3"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+serde_with = "3.14.1"
+smart-default = "0.7"
+rustls = { version = "0.23", default-features = false, features = ["ring"] }
+tokio = { version = "1", features = ["full"] }
+tokio-tungstenite = { version = "0.30", default-features = false, features = ["connect", "handshake", "rustls-tls-webpki-roots"] }
+tower-http = { version = "0.6", default-features = false, features = ["timeout"] }
+tracing = { version = "0.1", default-features = false, features = ["std"] }
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+url = { version = "2", features = ["serde"] }

@@ -1,0 +1,2356 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "description": "Operational view of test-case feed health, book freshness, bounded channels, latency, and signal outcomes.",
+  "editable": false,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "id": 1,
+      "type": "row",
+      "title": "Overview",
+      "description": "Current scrape, exchange connectivity, and whether both books are usable for signal evaluation.",
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "panels": []
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "Prometheus scrape",
+      "description": "Prometheus target health. No series means Prometheus has not discovered this target.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "test-case-prometheus"
+      },
+      "targets": [
+        {
+          "expr": "up{job=\"$job\",instance=~\"$instance\"}",
+          "refId": "A",
+          "legendFormat": "{{instance}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "test-case-prometheus"
+          },
+          "range": false,
+          "instant": true,
+          "color": "#5794F2"
+        }
+      ],
+      "gridPos": {
+        "h": 5,
+        "w": 12,
+        "x": 0,
+        "y": 1
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "showPoints": "never",
+            "spanNulls": false
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 0.5
+              }
+            ]
+          },
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "DOWN",
+                  "color": "red"
+                },
+                "1": {
+                  "text": "UP",
+                  "color": "green"
+                }
+              }
+            }
+          ]
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "textMode": "auto",
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "wideLayout": true,
+        "showPercentChange": false
+      }
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "Feeds connected",
+      "description": "1 means the WebSocket is connected. This does not mean a usable book has been published.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "test-case-prometheus"
+      },
+      "targets": [
+        {
+          "expr": "feed_connected{job=\"$job\",instance=~\"$instance\",exchange=~\"$exchange\"}",
+          "refId": "A",
+          "legendFormat": "{{exchange}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "test-case-prometheus"
+          },
+          "range": false,
+          "instant": true
+        }
+      ],
+      "gridPos": {
+        "h": 5,
+        "w": 12,
+        "x": 12,
+        "y": 1
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "showPoints": "never",
+            "spanNulls": false
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 0.5
+              }
+            ]
+          },
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "Disconnected",
+                  "color": "red"
+                },
+                "1": {
+                  "text": "Connected",
+                  "color": "green"
+                }
+              }
+            }
+          ]
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "textMode": "auto",
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "wideLayout": true,
+        "showPercentChange": false
+      }
+    },
+    {
+      "id": 4,
+      "type": "stat",
+      "title": "Books usable",
+      "description": "Current application readiness for each selected exchange book.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "test-case-prometheus"
+      },
+      "targets": [
+        {
+          "expr": "book_usable{job=\"$job\",instance=~\"$instance\",symbol=~\"$symbol\",exchange=~\"$exchange\"}",
+          "refId": "A",
+          "legendFormat": "{{exchange}} / {{symbol}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "test-case-prometheus"
+          },
+          "range": false,
+          "instant": true
+        }
+      ],
+      "gridPos": {
+        "h": 5,
+        "w": 12,
+        "x": 0,
+        "y": 6
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "showPoints": "never",
+            "spanNulls": false
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 0.5
+              }
+            ]
+          },
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "Unavailable",
+                  "color": "red"
+                },
+                "1": {
+                  "text": "Usable",
+                  "color": "green"
+                }
+              }
+            }
+          ]
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "textMode": "auto",
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "wideLayout": true,
+        "showPercentChange": false
+      }
+    },
+    {
+      "id": 5,
+      "type": "stat",
+      "title": "Process started at",
+      "description": "Start time of the process reported by the Linux process collector. Empty when the collector is unavailable.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "test-case-prometheus"
+      },
+      "targets": [
+        {
+          "expr": "process_start_time_seconds{job=\"$job\",instance=~\"$instance\"} * 1000",
+          "refId": "A",
+          "legendFormat": "{{instance}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "test-case-prometheus"
+          },
+          "range": false,
+          "instant": true
+        }
+      ],
+      "gridPos": {
+        "h": 5,
+        "w": 12,
+        "x": 12,
+        "y": 6
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "dateTimeAsIso",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "textMode": "value_and_name",
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "wideLayout": true,
+        "showPercentChange": false
+      }
+    },
+    {
+      "id": 6,
+      "type": "row",
+      "title": "Book freshness and input timing",
+      "description": "Snapshot age is derived from the published receive timestamp. Feed age distinguishes transport silence from a lack of accepted market updates.",
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 11
+      },
+      "panels": []
+    },
+    {
+      "id": 7,
+      "type": "timeseries",
+      "title": "Published book age at scrape",
+      "description": "Age of the published snapshot at the timestamp of its latest successful Prometheus scrape, derived from the local received_at timestamp. This is not a live current age; scrape intervals limit its update frequency. Initial zero timestamps are excluded. Use the Prometheus scrape card (up) for target availability.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "test-case-prometheus"
+      },
+      "targets": [
+        {
+          "expr": "clamp_min((timestamp(book_last_update_timestamp_nanoseconds{job=\"$job\",instance=~\"$instance\",symbol=~\"$symbol\",exchange=~\"$exchange\"}) * 1e9 - book_last_update_timestamp_nanoseconds{job=\"$job\",instance=~\"$instance\",symbol=~\"$symbol\",exchange=~\"$exchange\"}) / 1e6, 0) and (book_last_update_timestamp_nanoseconds{job=\"$job\",instance=~\"$instance\",symbol=~\"$symbol\",exchange=~\"$exchange\"} > 0)",
+          "refId": "A",
+          "legendFormat": "{{exchange}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "test-case-prometheus"
+          },
+          "range": true,
+          "instant": false
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 12
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "stacking": {
+          "mode": "none",
+          "group": "A"
+        }
+      }
+    },
+    {
+      "id": 8,
+      "type": "timeseries",
+      "title": "Feed input ages at scrape",
+      "description": "Age at the latest successful Prometheus scrape for the most recent transport frame and accepted valid snapshot. These are not live current ages; scrape intervals limit their update frequency. Initial NaN timestamps are absent. Use the Prometheus scrape card (up) for target availability.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "test-case-prometheus"
+      },
+      "targets": [
+        {
+          "expr": "clamp_min((timestamp(feed_last_frame_timestamp_nanoseconds{job=\"$job\",instance=~\"$instance\",exchange=~\"$exchange\"}) * 1e9 - feed_last_frame_timestamp_nanoseconds{job=\"$job\",instance=~\"$instance\",exchange=~\"$exchange\"}) / 1e6, 0) and (feed_last_frame_timestamp_nanoseconds{job=\"$job\",instance=~\"$instance\",exchange=~\"$exchange\"} > 0)",
+          "refId": "A",
+          "legendFormat": "{{exchange}} · any frame",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "test-case-prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "color": "#5794F2"
+        },
+        {
+          "expr": "clamp_min((timestamp(feed_last_valid_update_timestamp_nanoseconds{job=\"$job\",instance=~\"$instance\",exchange=~\"$exchange\"}) * 1e9 - feed_last_valid_update_timestamp_nanoseconds{job=\"$job\",instance=~\"$instance\",exchange=~\"$exchange\"}) / 1e6, 0) and (feed_last_valid_update_timestamp_nanoseconds{job=\"$job\",instance=~\"$instance\",exchange=~\"$exchange\"} > 0)",
+          "refId": "B",
+          "legendFormat": "{{exchange}} · accepted snapshot",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "test-case-prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "color": "#73BF69"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 12
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "stacking": {
+          "mode": "none",
+          "group": "A"
+        }
+      }
+    },
+    {
+      "id": 9,
+      "type": "timeseries",
+      "title": "Signal input age percentiles",
+      "description": "Quantiles from observed classic histogram buckets; no observations in the 5 minute window yields no series.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "test-case-prometheus"
+      },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.50, sum by (le, exchange) (rate(signal_input_age_nanoseconds_bucket{job=\"$job\",instance=~\"$instance\",exchange=~\"$exchange\"}[5m]))) / 1e6 and on (exchange) (sum by (exchange) (rate(signal_input_age_nanoseconds_count{job=\"$job\",instance=~\"$instance\",exchange=~\"$exchange\"}[5m])) > 0)",
+          "refId": "A",
+          "legendFormat": "p50 · {{exchange}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "test-case-prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "color": "#5794F2"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum by (le, exchange) (rate(signal_input_age_nanoseconds_bucket{job=\"$job\",instance=~\"$instance\",exchange=~\"$exchange\"}[5m]))) / 1e6 and on (exchange) (sum by (exchange) (rate(signal_input_age_nanoseconds_count{job=\"$job\",instance=~\"$instance\",exchange=~\"$exchange\"}[5m])) > 0)",
+          "refId": "B",
+          "legendFormat": "p95 · {{exchange}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "test-case-prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "color": "#73BF69"
+        },
+        {
+          "expr": "histogram_quantile(0.99, sum by (le, exchange) (rate(signal_input_age_nanoseconds_bucket{job=\"$job\",instance=~\"$instance\",exchange=~\"$exchange\"}[5m]))) / 1e6 and on (exchange) (sum by (exchange) (rate(signal_input_age_nanoseconds_count{job=\"$job\",instance=~\"$instance\",exchange=~\"$exchange\"}[5m])) > 0)",
+          "refId": "C",
+          "legendFormat": "p99 · {{exchange}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "test-case-prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "color": "#FF9830"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 20
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "stacking": {
+          "mode": "none",
+          "group": "A"
+        }
+      }
+    },
+    {
+      "id": 10,
+      "type": "timeseries",
+      "title": "Signal input skew percentiles",
+      "description": "Absolute receive-time difference of the two snapshots used by each evaluation. No synthetic zero is emitted when an input is missing.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "test-case-prometheus"
+      },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.50, sum by (le) (rate(signal_input_skew_nanoseconds_bucket{job=\"$job\",instance=~\"$instance\"}[5m]))) / 1e6 and on () (sum(rate(signal_input_skew_nanoseconds_count{job=\"$job\",instance=~\"$instance\"}[5m])) > 0)",
+          "refId": "A",
+          "legendFormat": "p50",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "test-case-prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "color": "#5794F2"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum by (le) (rate(signal_input_skew_nanoseconds_bucket{job=\"$job\",instance=~\"$instance\"}[5m]))) / 1e6 and on () (sum(rate(signal_input_skew_nanoseconds_count{job=\"$job\",instance=~\"$instance\"}[5m])) > 0)",
+          "refId": "B",
+          "legendFormat": "p95",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "test-case-prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "color": "#73BF69"
+        },
+        {
+          "expr": "histogram_quantile(0.99, sum by (le) (rate(signal_input_skew_nanoseconds_bucket{job=\"$job\",instance=~\"$instance\"}[5m]))) / 1e6 and on () (sum(rate(signal_input_skew_nanoseconds_count{job=\"$job\",instance=~\"$instance\"}[5m])) > 0)",
+          "refId": "C",
+          "legendFormat": "p99",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "test-case-prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "color": "#FF9830"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 20
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "stacking": {
+          "mode": "none",
+          "group": "A"
+        }
+      }
+    },
+    {
+      "id": 11,
+      "type": "row",
+      "title": "Ingestion, errors, and recovery",
+      "description": "Rates show completed events. Retry exhaustion may be followed by process exit before another scrape can collect its final increment; target down remains visible.",
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 28
+      },
+      "panels": []
+    },
+    {
+      "id": 12,
+      "type": "timeseries",
+      "title": "Depth message outcomes",
+      "description": "Accepted, duplicate, outdated, wrong-symbol, and invalid depth messages. Control frames are omitted from this market-data chart.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "test-case-prometheus"
+      },
+      "targets": [
+        {
+          "expr": "sum by (exchange, result) (rate(feed_messages_total{job=\"$job\",instance=~\"$instance\",exchange=~\"$exchange\",result!=\"control\"}[5m]))",
+          "refId": "A",
+          "legendFormat": "{{exchange}} · {{result}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "test-case-prometheus"
+          },
+          "range": true,
+          "instant": false
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 29
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "stacking": {
+          "mode": "none",
+          "group": "A"
+        }
+      }
+    },
+    {
+      "id": 13,
+      "type": "timeseries",
+      "title": "Feed errors and reconnect reasons",
+      "description": "Fixed, bounded error and disconnect labels. Rates automatically handle process counter resets.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "test-case-prometheus"
+      },
+      "targets": [
+        {
+          "expr": "sum by (exchange, kind) (rate(feed_errors_total{job=\"$job\",instance=~\"$instance\",exchange=~\"$exchange\"}[5m]))",
+          "refId": "A",
+          "legendFormat": "{{exchange}} · error · {{kind}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "test-case-prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "color": "#F2495C"
+        },
+        {
+          "expr": "sum by (exchange, reason) (rate(feed_reconnects_total{job=\"$job\",instance=~\"$instance\",exchange=~\"$exchange\"}[5m]))",
+          "refId": "B",
+          "legendFormat": "{{exchange}} · reconnect · {{reason}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "test-case-prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "color": "#FF9830"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 29
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "stacking": {
+          "mode": "none",
+          "group": "A"
+        }
+      }
+    },
+    {
+      "id": 14,
+      "type": "timeseries",
+      "title": "Connection attempts and retry exhaustion",
+      "description": "Connection attempts per second use the left axis. Retry exhaustions over the preceding 15 minutes use the right count axis; Prometheus extrapolation may yield fractional counts. The final exhaustion count may be missed when the application exits immediately.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "test-case-prometheus"
+      },
+      "targets": [
+        {
+          "expr": "sum by (exchange, result) (rate(feed_connection_attempts_total{job=\"$job\",instance=~\"$instance\",exchange=~\"$exchange\"}[5m]))",
+          "refId": "A",
+          "legendFormat": "{{exchange}} · {{result}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "test-case-prometheus"
+          },
+          "range": true,
+          "instant": false
+        },
+        {
+          "expr": "sum by (exchange) (increase(feed_retry_exhaustions_total{job=\"$job\",instance=~\"$instance\",exchange=~\"$exchange\"}[15m]))",
+          "refId": "B",
+          "legendFormat": "{{exchange}} · exhausted (15m)",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "test-case-prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "color": "#F2495C"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 37
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "showPoints": "never",
+            "spanNulls": false,
+            "axisPlacement": "left",
+            "axisLabel": "Attempts / s"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "B"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "right"
+              },
+              {
+                "id": "custom.axisLabel",
+                "value": "Exhaustions (15m)"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "red"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "stacking": {
+          "mode": "none",
+          "group": "A"
+        }
+      }
+    },
+    {
+      "id": 15,
+      "type": "timeseries",
+      "title": "WebSocket payload throughput",
+      "description": "Application payload bytes yielded by WebSocket; excludes TCP/TLS overhead.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "test-case-prometheus"
+      },
+      "targets": [
+        {
+          "expr": "sum by (exchange) (rate(feed_received_bytes_total{job=\"$job\",instance=~\"$instance\",exchange=~\"$exchange\"}[5m]))",
+          "refId": "A",
+          "legendFormat": "{{exchange}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "test-case-prometheus"
+          },
+          "range": true,
+          "instant": false
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 37
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "Bps",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "stacking": {
+          "mode": "none",
+          "group": "A"
+        }
+      }
+    },
+    {
+      "id": 16,
+      "type": "row",
+      "title": "Channels and message loss",
+      "description": "Each bounded queue is shown separately. Loss is failed sends divided by successful sends plus failed sends; intervals with no sends have no ratio.",
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 45
+      },
+      "panels": []
+    },
+    {
+      "id": 17,
+      "type": "timeseries",
+      "title": "Queue depth and capacity",
+      "description": "Queue depth is sampled periodically; brief peaks can be missed. Capacity is configured message count.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "test-case-prometheus"
+      },
+      "targets": [
+        {
+          "expr": "channel_queue_depth{job=\"$job\",instance=~\"$instance\"}",
+          "refId": "A",
+          "legendFormat": "{{channel}} · queued",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "test-case-prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "color": "#5794F2"
+        },
+        {
+          "expr": "channel_capacity{job=\"$job\",instance=~\"$instance\"}",
+          "refId": "B",
+          "legendFormat": "{{channel}} · capacity",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "test-case-prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "color": "#B877D9"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 46
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "stacking": {
+          "mode": "none",
+          "group": "A"
+        }
+      }
+    },
+    {
+      "id": 18,
+      "type": "timeseries",
+      "title": "Channel send and receive rates",
+      "description": "Successful nonblocking sends compared with messages actually removed by the receiver.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "test-case-prometheus"
+      },
+      "targets": [
+        {
+          "expr": "sum by (channel) (rate(channel_sent_total{job=\"$job\",instance=~\"$instance\"}[5m]))",
+          "refId": "A",
+          "legendFormat": "{{channel}} · sent",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "test-case-prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "color": "#5794F2"
+        },
+        {
+          "expr": "sum by (channel) (rate(channel_received_total{job=\"$job\",instance=~\"$instance\"}[5m]))",
+          "refId": "B",
+          "legendFormat": "{{channel}} · received",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "test-case-prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "color": "#73BF69"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 46
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "stacking": {
+          "mode": "none",
+          "group": "A"
+        }
+      }
+    },
+    {
+      "id": 19,
+      "type": "timeseries",
+      "title": "Channel send loss ratio",
+      "description": "Full and disconnected failures divided by all attempted sends. No ratio is returned when the window has no sends.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "test-case-prometheus"
+      },
+      "targets": [
+        {
+          "expr": "100 * (sum by (channel) (rate(channel_send_failures_total{job=\"$job\",instance=~\"$instance\"}[5m]))) / (sum by (channel) (rate(channel_sent_total{job=\"$job\",instance=~\"$instance\"}[5m])) + sum by (channel) (rate(channel_send_failures_total{job=\"$job\",instance=~\"$instance\"}[5m]))) and on (channel) ((sum by (channel) (rate(channel_sent_total{job=\"$job\",instance=~\"$instance\"}[5m])) + sum by (channel) (rate(channel_send_failures_total{job=\"$job\",instance=~\"$instance\"}[5m]))) > 0)",
+          "refId": "A",
+          "legendFormat": "{{channel}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "test-case-prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "color": "#F2495C"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 54
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "stacking": {
+          "mode": "none",
+          "group": "A"
+        }
+      }
+    },
+    {
+      "id": 20,
+      "type": "table",
+      "title": "Send failures by channel and reason (last 15m)",
+      "description": "One row per channel and send-failure reason. Values are Prometheus increase estimates over the preceding 15 minutes; boundary extrapolation can yield fractional values. Counters reset safely across process restarts.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "test-case-prometheus"
+      },
+      "targets": [
+        {
+          "expr": "sum by (channel, reason) (increase(channel_send_failures_total{job=\"$job\",instance=~\"$instance\"}[15m]))",
+          "refId": "A",
+          "legendFormat": "{{channel}} · {{reason}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "test-case-prometheus"
+          },
+          "range": false,
+          "instant": true,
+          "format": "table"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 54
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "showPoints": "never",
+            "spanNulls": false,
+            "minWidth": 80
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "channel"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 150
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "reason"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 110
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Failures (15m)"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 128
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        },
+        "sortBy": [
+          {
+            "displayName": "Failures (15m)",
+            "desc": true
+          }
+        ]
+      },
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true
+            },
+            "includeByName": {},
+            "indexByName": {
+              "channel": 0,
+              "reason": 1,
+              "Value": 2
+            },
+            "renameByName": {
+              "Value": "Failures (15m)"
+            }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": [
+              {
+                "field": "Failures (15m)",
+                "desc": true
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "type": "timeseries",
+      "title": "Book depth levels",
+      "description": "Number of currently stored bid and ask levels; level count alone does not imply book usability.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "test-case-prometheus"
+      },
+      "targets": [
+        {
+          "expr": "book_levels{job=\"$job\",instance=~\"$instance\",symbol=~\"$symbol\",exchange=~\"$exchange\"}",
+          "refId": "A",
+          "legendFormat": "{{exchange}} · {{side}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "test-case-prometheus"
+          },
+          "range": true,
+          "instant": false
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 62
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "stacking": {
+          "mode": "none",
+          "group": "A"
+        }
+      }
+    },
+    {
+      "id": 34,
+      "type": "timeseries",
+      "title": "Book validation errors",
+      "description": "Snapshots rejected by the book task for the wrong symbol or invalid row data. Feed parser and transport errors remain in the feed error chart.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "test-case-prometheus"
+      },
+      "targets": [
+        {
+          "expr": "sum by (exchange, symbol) (rate(book_validation_errors_total{job=\"$job\",instance=~\"$instance\",exchange=~\"$exchange\",symbol=~\"$symbol\"}[5m]))",
+          "refId": "A",
+          "legendFormat": "{{exchange}} · {{symbol}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "test-case-prometheus"
+          }
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 62
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "stacking": {
+          "mode": "none",
+          "group": "A"
+        }
+      }
+    },
+    {
+      "id": 22,
+      "type": "row",
+      "title": "Processing latency and ping RTT",
+      "description": "Application time families are exported in nanoseconds and scaled to milliseconds here. Process collector metrics retain their standard units.",
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 70
+      },
+      "panels": []
+    },
+    {
+      "id": 23,
+      "type": "timeseries",
+      "title": "Processing duration percentiles",
+      "description": "Parse, book-update, and signal calculation work, excluding queue wait. Quantiles are computed from classic buckets over five minutes.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "test-case-prometheus"
+      },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.50, sum by (le, stage) (rate(processing_duration_nanoseconds_bucket{job=\"$job\",instance=~\"$instance\"}[5m]))) / 1e6 and on (stage) (sum by (stage) (rate(processing_duration_nanoseconds_count{job=\"$job\",instance=~\"$instance\"}[5m])) > 0)",
+          "refId": "A",
+          "legendFormat": "p50 · {{stage}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "test-case-prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "color": "#5794F2"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum by (le, stage) (rate(processing_duration_nanoseconds_bucket{job=\"$job\",instance=~\"$instance\"}[5m]))) / 1e6 and on (stage) (sum by (stage) (rate(processing_duration_nanoseconds_count{job=\"$job\",instance=~\"$instance\"}[5m])) > 0)",
+          "refId": "B",
+          "legendFormat": "p95 · {{stage}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "test-case-prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "color": "#73BF69"
+        },
+        {
+          "expr": "histogram_quantile(0.99, sum by (le, stage) (rate(processing_duration_nanoseconds_bucket{job=\"$job\",instance=~\"$instance\"}[5m]))) / 1e6 and on (stage) (sum by (stage) (rate(processing_duration_nanoseconds_count{job=\"$job\",instance=~\"$instance\"}[5m])) > 0)",
+          "refId": "C",
+          "legendFormat": "p99 · {{stage}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "test-case-prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "color": "#FF9830"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 71
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "stacking": {
+          "mode": "none",
+          "group": "A"
+        }
+      }
+    },
+    {
+      "id": 24,
+      "type": "timeseries",
+      "title": "Frame-to-published-book latency percentiles",
+      "description": "Transport frame receipt through parsing, queueing, and publication, by exchange.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "test-case-prometheus"
+      },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.50, sum by (le, exchange) (rate(book_update_latency_nanoseconds_bucket{job=\"$job\",instance=~\"$instance\",exchange=~\"$exchange\"}[5m]))) / 1e6 and on (exchange) (sum by (exchange) (rate(book_update_latency_nanoseconds_count{job=\"$job\",instance=~\"$instance\",exchange=~\"$exchange\"}[5m])) > 0)",
+          "refId": "A",
+          "legendFormat": "p50 · {{exchange}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "test-case-prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "color": "#5794F2"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum by (le, exchange) (rate(book_update_latency_nanoseconds_bucket{job=\"$job\",instance=~\"$instance\",exchange=~\"$exchange\"}[5m]))) / 1e6 and on (exchange) (sum by (exchange) (rate(book_update_latency_nanoseconds_count{job=\"$job\",instance=~\"$instance\",exchange=~\"$exchange\"}[5m])) > 0)",
+          "refId": "B",
+          "legendFormat": "p95 · {{exchange}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "test-case-prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "color": "#73BF69"
+        },
+        {
+          "expr": "histogram_quantile(0.99, sum by (le, exchange) (rate(book_update_latency_nanoseconds_bucket{job=\"$job\",instance=~\"$instance\",exchange=~\"$exchange\"}[5m]))) / 1e6 and on (exchange) (sum by (exchange) (rate(book_update_latency_nanoseconds_count{job=\"$job\",instance=~\"$instance\",exchange=~\"$exchange\"}[5m])) > 0)",
+          "refId": "C",
+          "legendFormat": "p99 · {{exchange}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "test-case-prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "color": "#FF9830"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 71
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "stacking": {
+          "mode": "none",
+          "group": "A"
+        }
+      }
+    },
+    {
+      "id": 25,
+      "type": "timeseries",
+      "title": "Ping RTT percentiles",
+      "description": "RTT is measured only for a matching Pong on the current connection.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "test-case-prometheus"
+      },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.50, sum by (le, exchange) (rate(feed_ping_rtt_nanoseconds_bucket{job=\"$job\",instance=~\"$instance\",exchange=~\"$exchange\"}[5m]))) / 1e6 and on (exchange) (sum by (exchange) (rate(feed_ping_rtt_nanoseconds_count{job=\"$job\",instance=~\"$instance\",exchange=~\"$exchange\"}[5m])) > 0)",
+          "refId": "A",
+          "legendFormat": "p50 · {{exchange}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "test-case-prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "color": "#5794F2"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum by (le, exchange) (rate(feed_ping_rtt_nanoseconds_bucket{job=\"$job\",instance=~\"$instance\",exchange=~\"$exchange\"}[5m]))) / 1e6 and on (exchange) (sum by (exchange) (rate(feed_ping_rtt_nanoseconds_count{job=\"$job\",instance=~\"$instance\",exchange=~\"$exchange\"}[5m])) > 0)",
+          "refId": "B",
+          "legendFormat": "p95 · {{exchange}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "test-case-prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "color": "#73BF69"
+        },
+        {
+          "expr": "histogram_quantile(0.99, sum by (le, exchange) (rate(feed_ping_rtt_nanoseconds_bucket{job=\"$job\",instance=~\"$instance\",exchange=~\"$exchange\"}[5m]))) / 1e6 and on (exchange) (sum by (exchange) (rate(feed_ping_rtt_nanoseconds_count{job=\"$job\",instance=~\"$instance\",exchange=~\"$exchange\"}[5m])) > 0)",
+          "refId": "C",
+          "legendFormat": "p99 · {{exchange}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "test-case-prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "color": "#FF9830"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 79
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "stacking": {
+          "mode": "none",
+          "group": "A"
+        }
+      }
+    },
+    {
+      "id": 26,
+      "type": "timeseries",
+      "title": "Connection duration percentiles",
+      "description": "Successful and failed connection/subscription attempts, with reconnect waiting excluded. Fifteen minute window for sparse attempts.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "test-case-prometheus"
+      },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.50, sum by (le, exchange, result) (rate(feed_connection_duration_nanoseconds_bucket{job=\"$job\",instance=~\"$instance\",exchange=~\"$exchange\"}[15m]))) / 1e6 and on (exchange, result) (sum by (exchange, result) (rate(feed_connection_duration_nanoseconds_count{job=\"$job\",instance=~\"$instance\",exchange=~\"$exchange\"}[15m])) > 0)",
+          "refId": "A",
+          "legendFormat": "p50 · {{exchange}} · {{result}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "test-case-prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "color": "#5794F2"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum by (le, exchange, result) (rate(feed_connection_duration_nanoseconds_bucket{job=\"$job\",instance=~\"$instance\",exchange=~\"$exchange\"}[15m]))) / 1e6 and on (exchange, result) (sum by (exchange, result) (rate(feed_connection_duration_nanoseconds_count{job=\"$job\",instance=~\"$instance\",exchange=~\"$exchange\"}[15m])) > 0)",
+          "refId": "B",
+          "legendFormat": "p95 · {{exchange}} · {{result}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "test-case-prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "color": "#73BF69"
+        },
+        {
+          "expr": "histogram_quantile(0.99, sum by (le, exchange, result) (rate(feed_connection_duration_nanoseconds_bucket{job=\"$job\",instance=~\"$instance\",exchange=~\"$exchange\"}[15m]))) / 1e6 and on (exchange, result) (sum by (exchange, result) (rate(feed_connection_duration_nanoseconds_count{job=\"$job\",instance=~\"$instance\",exchange=~\"$exchange\"}[15m])) > 0)",
+          "refId": "C",
+          "legendFormat": "p99 · {{exchange}} · {{result}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "test-case-prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "color": "#FF9830"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 79
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "stacking": {
+          "mode": "none",
+          "group": "A"
+        }
+      }
+    },
+    {
+      "id": 27,
+      "type": "row",
+      "title": "Spread directions and Hold outcomes",
+      "description": "Spreads are raw gauge values in basis points. NaN and absent observations remain gaps. The horizontal comparison line comes from the running process threshold gauge.",
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 87
+      },
+      "panels": []
+    },
+    {
+      "id": 28,
+      "type": "timeseries",
+      "title": "Cross-exchange spread by direction",
+      "description": "A spread is present only while the inputs produce a valid calculation. The orange series is read from the running app configuration, not a dashboard constant.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "test-case-prometheus"
+      },
+      "targets": [
+        {
+          "expr": "signal_spread_basis_points{job=\"$job\",instance=~\"$instance\",direction=\"sell_binance_buy_aster\"}",
+          "refId": "A",
+          "legendFormat": "Sell Binance · buy Aster",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "test-case-prometheus"
+          },
+          "range": true,
+          "instant": false
+        },
+        {
+          "expr": "signal_spread_basis_points{job=\"$job\",instance=~\"$instance\",direction=\"sell_aster_buy_binance\"}",
+          "refId": "B",
+          "legendFormat": "Sell Aster · buy Binance",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "test-case-prometheus"
+          },
+          "range": true,
+          "instant": false
+        },
+        {
+          "expr": "signal_threshold_basis_points{job=\"$job\",instance=~\"$instance\"}",
+          "refId": "C",
+          "legendFormat": "Configured signal threshold",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "test-case-prometheus"
+          },
+          "range": true,
+          "instant": false
+        }
+      ],
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 88
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "suffix:bps",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Sell Binance · buy Aster"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#5794F2"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Sell Aster · buy Binance"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#B877D9"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Configured signal threshold"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#FF9830"
+                }
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              },
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "fill": "dash",
+                  "dash": [
+                    8,
+                    4
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "stacking": {
+          "mode": "none",
+          "group": "A"
+        }
+      }
+    },
+    {
+      "id": 29,
+      "type": "timeseries",
+      "title": "Signal outcome rates",
+      "description": "Both directional outcomes and each fixed Hold reason; a missing rate means no event in the selected window.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "test-case-prometheus"
+      },
+      "targets": [
+        {
+          "expr": "sum by (result) (rate(signal_calculations_total{job=\"$job\",instance=~\"$instance\",result=~\"long_.*|hold_.*\"}[5m]))",
+          "refId": "A",
+          "legendFormat": "{{result}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "test-case-prometheus"
+          },
+          "range": true,
+          "instant": false
+        }
+      ],
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 88
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "stacking": {
+          "mode": "none",
+          "group": "A"
+        }
+      }
+    },
+    {
+      "id": 30,
+      "type": "row",
+      "title": "Process resources",
+      "description": "The built-in process collector is registered only on Linux. Resource panels intentionally remain empty on platforms where those standard process metrics are unavailable.",
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 97
+      },
+      "panels": []
+    },
+    {
+      "id": 31,
+      "type": "timeseries",
+      "title": "Process CPU",
+      "description": "Standard Prometheus process collector metric: CPU seconds per second. Unavailable on non-Linux builds.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "test-case-prometheus"
+      },
+      "targets": [
+        {
+          "expr": "rate(process_cpu_seconds_total{job=\"$job\",instance=~\"$instance\"}[5m])",
+          "refId": "A",
+          "legendFormat": "CPU cores",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "test-case-prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "color": "#5794F2"
+        }
+      ],
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 98
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "cores",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "stacking": {
+          "mode": "none",
+          "group": "A"
+        }
+      }
+    },
+    {
+      "id": 32,
+      "type": "timeseries",
+      "title": "Resident memory",
+      "description": "Standard Prometheus process collector metric. Unavailable on non-Linux builds.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "test-case-prometheus"
+      },
+      "targets": [
+        {
+          "expr": "process_resident_memory_bytes{job=\"$job\",instance=~\"$instance\"}",
+          "refId": "A",
+          "legendFormat": "RSS",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "test-case-prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "color": "#73BF69"
+        }
+      ],
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 12,
+        "y": 98
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "stacking": {
+          "mode": "none",
+          "group": "A"
+        }
+      }
+    },
+    {
+      "id": 33,
+      "type": "stat",
+      "title": "Process restarts (24h)",
+      "description": "Changes to process start time observed by Prometheus over 24 hours. This is scrape-based and only available where the collector is registered.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "test-case-prometheus"
+      },
+      "targets": [
+        {
+          "expr": "changes(process_start_time_seconds{job=\"$job\",instance=~\"$instance\"}[24h])",
+          "refId": "A",
+          "legendFormat": "{{instance}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "test-case-prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "color": "#FF9830"
+        }
+      ],
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 105
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "textMode": "auto",
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "wideLayout": true,
+        "showPercentChange": false
+      }
+    }
+  ],
+  "refresh": "5s",
+  "schemaVersion": 39,
+  "tags": [
+    "test-case",
+    "prometheus",
+    "trading"
+  ],
+  "templating": {
+    "list": [
+      {
+        "name": "job",
+        "type": "query",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "test-case-prometheus"
+        },
+        "definition": "label_values(up, job)",
+        "query": {
+          "query": "label_values(up, job)",
+          "refId": "PrometheusVariableQueryEditor-Job"
+        },
+        "refresh": 1,
+        "includeAll": false,
+        "multi": false,
+        "sort": 1,
+        "current": {
+          "selected": false,
+          "text": "test-case",
+          "value": "test-case"
+        }
+      },
+      {
+        "name": "instance",
+        "type": "query",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "test-case-prometheus"
+        },
+        "definition": "label_values(up{job=\"$job\"}, instance)",
+        "query": {
+          "query": "label_values(up{job=\"$job\"}, instance)",
+          "refId": "PrometheusVariableQueryEditor-Instance"
+        },
+        "refresh": 2,
+        "includeAll": true,
+        "allValue": ".*",
+        "multi": true,
+        "sort": 1,
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
+        }
+      },
+      {
+        "name": "exchange",
+        "type": "query",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "test-case-prometheus"
+        },
+        "definition": "label_values(feed_connected{job=\"$job\",instance=~\"$instance\"}, exchange)",
+        "query": {
+          "query": "label_values(feed_connected{job=\"$job\",instance=~\"$instance\"}, exchange)",
+          "refId": "PrometheusVariableQueryEditor-Exchange"
+        },
+        "refresh": 2,
+        "includeAll": true,
+        "allValue": ".*",
+        "multi": true,
+        "sort": 1,
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
+        }
+      },
+      {
+        "name": "symbol",
+        "type": "query",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "test-case-prometheus"
+        },
+        "definition": "label_values(book_usable{job=\"$job\",instance=~\"$instance\"}, symbol)",
+        "query": {
+          "query": "label_values(book_usable{job=\"$job\",instance=~\"$instance\"}, symbol)",
+          "refId": "PrometheusVariableQueryEditor-Symbol"
+        },
+        "refresh": 2,
+        "includeAll": true,
+        "allValue": ".*",
+        "multi": true,
+        "sort": 1,
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
+        }
+      }
+    ]
+  },
+  "time": {
+    "from": "now-15m",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Test Case · Runtime",
+  "uid": "test-case-runtime",
+  "version": 1,
+  "weekStart": ""
+}
